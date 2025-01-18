@@ -9,6 +9,6 @@ export const initialFormData = {
     name: '',
     email: '',
     phone: '',
-    age: '',
+    age: 0,
     category: 1
 };

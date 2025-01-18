@@ -29,9 +29,10 @@ function EditContactDialog({ open, onClose, contactData, onContactUpdated }) {
                 name: contactData.name || '',
                 email: contactData.email || '',
                 phone: contactData.phone || '',
-                age: contactData.age || '',
+                age: contactData.age || 0,
                 category: contactData.category || 1
             });
+            setErrors({});
             setApiError(null);
         }
     }, [open, contactData]);
@@ -61,7 +62,7 @@ function EditContactDialog({ open, onClose, contactData, onContactUpdated }) {
                 name: formData.name.trim(),
                 email: formData.email.trim(),
                 phone: formData.phone.trim(),
-                age: Number(formData.age),
+                age: formData.age,
                 category: Number(formData.category),
             });
 
@@ -73,7 +74,7 @@ function EditContactDialog({ open, onClose, contactData, onContactUpdated }) {
             onClose();
         } catch (err) {
             if (err.response) {
-                setApiError(err.response.data.message || 'Error updating contact');
+                setApiError(err.response.data.details || 'Error updating contact');
             } else {
                 setApiError('Network error');
             }

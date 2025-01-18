@@ -19,7 +19,7 @@ const contactSchema = Joi.object({
         .messages({
             'string.pattern.base': '"phone" must contain only numbers, spaces, dashes, parentheses, or plus signs',
         }),
-    age: Joi.number().integer().min(0).max(120).default(0)
+    age: Joi.number().integer().min(0).max(120)
         .messages({
             'number.base': '"age" must be a number',
             'number.min': '"age" cannot be negative',

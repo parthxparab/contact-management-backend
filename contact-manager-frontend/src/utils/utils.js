@@ -5,6 +5,8 @@ function isValidEmail(email) {
 }
 
 export function validateFormData(formData) {
+
+    console.log({formData})
     const errors = {};
 
     if (!formData.name.trim()) {
@@ -15,7 +17,7 @@ export function validateFormData(formData) {
     } else if (!isValidEmail(formData.email)) {
         errors.email = 'Invalid email format';
     }
-    if (formData.age && (isNaN(formData.age) || formData.age < 0 || formData.age > 120)) {
+    if (!formData.age || (formData.age && (formData.age == "" || isNaN(formData.age) || formData.age < 0 || formData.age > 120))) {
         errors.age = 'Age must be a number between 0 and 120';
     }
     const phoneRegex = /^(?:[+\-()\s]*\d){10}[+\-()\s]*$/;
