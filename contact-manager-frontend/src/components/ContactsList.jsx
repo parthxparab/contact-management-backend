@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import api from '../services/api';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import {
+    IconButton,
+    Paper,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
-    Paper,
-    Typography,
-    IconButton
+    Typography
 } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import React, { useEffect, useState } from 'react';
+import { deleteContactByEmail, getAllContacts } from '../services/contactService';
 import { formatPhoneNumber, getCategoryLabel } from '../utils/utils';
 import EditContactDialog from './EditContactDialog'; // import the edit dialog
-import { deleteContactByEmail, getAllContacts } from '../services/contactService';
 
 function ContactsList({ refreshFlag }) {
     const [contacts, setContacts] = useState([]);
