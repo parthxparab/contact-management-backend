@@ -22,8 +22,8 @@ jobs:
           node-version: '20.x'
           
       - name: Build frontend
-        working-directory: ./contact-manager-frontend
         run: |
+          cd ./contact-manager-frontend
           npm install
           npm run build   
       
