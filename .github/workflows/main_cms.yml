@@ -20,7 +20,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
-
+          
+      - name: Build frontend
+        run: |
+          cd ./contact-manager-frontend
+          npm install --legacy-peer-deps
+          npm run build   
+      
       - name: npm install
         run: |
           npm install
