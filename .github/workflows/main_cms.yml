@@ -25,7 +25,8 @@ jobs:
         run: |
           cd ./contact-manager-frontend
           npm install --legacy-peer-deps
-          npm run build   
+          npm run build
+          rm -rf node_modules
       
       - name: npm install
         run: |
