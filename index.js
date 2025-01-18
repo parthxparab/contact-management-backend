@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { sequelize } = require('./models'); // Adjust the path to your Sequelize models folder
 
 const app = express();
@@ -9,9 +10,19 @@ const PORT = process.env.PORT || 3000; // Use Azure's dynamic PORT or default to
 app.use(cors());
 app.use(express.json()); // Built-in JSON parser
 
+console.log(path.join(__dirname, 'contact-manager-frontend', 'build', 'index.html'))
+
+// Serve frontend static files
+app.use(express.static(path.join(__dirname, 'contact-manager-frontend', 'build')));
+
+
 // Import Routes
 const contactRoutes = require('./routes/contacts');
 app.use('/contacts', contactRoutes);
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'contact-manager-frontend', 'build', 'index.html'));
+});
 
 // Sync Database Schema
 sequelize
