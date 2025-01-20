@@ -6,7 +6,6 @@ function isValidEmail(email) {
 
 export function validateFormData(formData) {
 
-    console.log({formData})
     const errors = {};
 
     if (!formData.name.trim()) {

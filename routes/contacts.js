@@ -102,12 +102,10 @@ router.patch('/email/:email', validateContactPatch, async (req, res) => {
 router.delete('/email/:email', async (req, res) => {
     try {
         const { email } = req.params;
-        console.log({email})
         const contact = await Contact.findOne({ where: { email } });
         if (!contact) {
             return res.status(404).json({ message: 'Contact not found' });
         }
-        console.log({contact})
         await contact.destroy();
         return res.json({ message: 'Contact deleted successfully' });
     } catch (error) {
