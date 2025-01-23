@@ -13,9 +13,9 @@ import {
     Typography
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { CATEGORY_OPTIONS, initialFormData } from '../constants/constants';
+import { CATEGORY_OPTIONS, initialFormData, textFields } from '../constants/constants';
 import { createContact } from '../services/contactService';
-import { validateFormData } from '../utils/utils';
+import { handleInputChange, validateFormData } from '../utils/utils';
 
 function AddContactDialog({ open, onClose, onContactAdded }) {
 
@@ -29,11 +29,6 @@ function AddContactDialog({ open, onClose, onContactAdded }) {
             setErrors({});
         }
     }, [open]);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -49,25 +44,22 @@ function AddContactDialog({ open, onClose, onContactAdded }) {
         setErrors({});
 
         try {
-            // Use the createContact service function
             await createContact({
                 name: formData.name.trim(),
                 email: formData.email.trim(),
                 phone: formData.phone.trim(),
-                age: Number(formData.age),
+                age: formData.age ? Number(formData.age) : null,
                 category: Number(formData.category)
             });
 
             alert('Contact added successfully!');
-            // Reset the form
             setFormData(initialFormData);
-            // Notify parent and close dialog
             if (onContactAdded) onContactAdded();
             onClose();
 
         } catch (err) {
             if (err.response) {
-                setApiError(err.response.data.message || 'Error adding contact');
+                setApiError(err.response.data.details || 'Error adding contact');
             } else {
                 setApiError('Network error');
             }
@@ -80,43 +72,19 @@ function AddContactDialog({ open, onClose, onContactAdded }) {
             <DialogContent dividers>
                 <form onSubmit={handleSubmit}>
                     <Stack spacing={2} sx={{ mb: 2 }}>
-                        <TextField
-                            label="Name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            error={!!errors.name}
-                            helperText={errors.name}
-                            required
-                        />
-                        <TextField
-                            label="Email"
-                            name="email"
-                            type="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            error={!!errors.email}
-                            helperText={errors.email}
-                            required
-                        />
-                        <TextField
-                            label="Phone"
-                            name="phone"
-                            type="tel"
-                            value={formData.phone}
-                            onChange={handleChange}
-                            error={!!errors.phone}
-                            helperText={errors.phone}
-                        />
-                        <TextField
-                            label="Age"
-                            name="age"
-                            type="number"
-                            value={formData.age}
-                            onChange={handleChange}
-                            error={!!errors.age}
-                            helperText={errors.age}
-                        />
+                        {textFields.map((field) => (
+                            <TextField
+                                key={field.name}
+                                label={field.label}
+                                name={field.name}
+                                type={field.type || 'text'}
+                                value={formData[field.name]}
+                                onChange={handleInputChange(setFormData)}
+                                error={!!errors[field.name]}
+                                helperText={errors[field.name]}
+                                required={field.required || false}
+                            />
+                        ))}
                         <FormControl fullWidth error={!!errors.category}>
                             <InputLabel id="category-label">Category</InputLabel>
                             <Select
@@ -124,7 +92,7 @@ function AddContactDialog({ open, onClose, onContactAdded }) {
                                 label="Category"
                                 name="category"
                                 value={formData.category}
-                                onChange={handleChange}
+                                onChange={handleInputChange(setFormData)}
                             >
                                 {CATEGORY_OPTIONS.map((opt) => (
                                     <MenuItem key={opt.value} value={opt.value}>
@@ -149,12 +117,8 @@ function AddContactDialog({ open, onClose, onContactAdded }) {
                 </form>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose} color="secondary">
-                    Cancel
-                </Button>
-                <Button onClick={handleSubmit} variant="contained" color="primary">
-                    Add
-                </Button>
+                <Button onClick={onClose} color="secondary">Cancel</Button>
+                <Button onClick={handleSubmit} variant="contained" color="primary">Add</Button>
             </DialogActions>
         </Dialog>
     );

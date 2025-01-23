@@ -16,10 +16,8 @@ function App() {
     setDialogOpen(false);
   };
 
-  // This can be called after a contact is added, to trigger re-fetch
   const handleContactAdded = () => {
     setRefreshFlag((prev) => !prev);
-    // toggling refreshFlag will cause a useEffect re-run in <ContactsList>
     handleCloseDialog();
   };
 

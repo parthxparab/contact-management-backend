@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Contact } = require('../models');
-const { validateContact, validateContactPatch } = require('../middleware/validateContact');
+const { validateContact } = require('../middleware/validateContact');
 
 // CREATE: Add a new contact
 router.post('/', validateContact, async (req, res) => {
@@ -23,6 +23,7 @@ router.post('/', validateContact, async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const contacts = await Contact.findAll();
+        console.log({contacts})
         return res.json(contacts);
     } catch (error) {
         return res.status(500).json({ message: error.message });
@@ -63,32 +64,6 @@ router.put('/email/:email', validateContact, async (req, res) => {
         return res.json(contact);
     } catch (error) {
         // Handle unique constraint error (if the user changed the email to another existing email)
-        if (error.name === 'SequelizeUniqueConstraintError') {
-            return res.status(400).json({
-                message: 'A contact with this email already exists.',
-            });
-        }
-        return res.status(500).json({ message: error.message });
-    }
-});
-
-// PATCH: Partially update a contact by Email
-router.patch('/email/:email', validateContactPatch, async (req, res) => {
-    try {
-        const { email } = req.params;
-        const data = req.body;
-
-        // 1. Find contact by email
-        const contact = await Contact.findOne({ where: { email } });
-        if (!contact) {
-            return res.status(404).json({ message: 'Contact not found' });
-        }
-
-        // 2. Update only the provided fields
-        await contact.update(data);
-
-        return res.json(contact);
-    } catch (error) {
         if (error.name === 'SequelizeUniqueConstraintError') {
             return res.status(400).json({
                 message: 'A contact with this email already exists.',

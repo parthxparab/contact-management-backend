@@ -21,6 +21,8 @@ export async function getContactByEmail(email) {
  * POST /contacts
  */
 export async function createContact(data) {
+
+    console.log({data})
     // Make a shallow copy of data, then strip non-digit chars from phone
     const sanitizedData = {
         ...data,
@@ -43,15 +45,6 @@ export async function updateContactByEmail(email, data) {
 
     return api.put(`/contacts/email/${encodeURIComponent(email)}`, sanitizedData);
 }
-
-/**
- * Partially update a contact (PATCH) by Email
- * PATCH /contacts/email/:email
- */
-export async function patchContactByEmail(email, data) {
-    return api.patch(`/contacts/email/${encodeURIComponent(email)}`, data);
-}
-
 /**
  * Delete a contact by Email
  * DELETE /contacts/email/:email

@@ -9,6 +9,13 @@ export const initialFormData = {
     name: '',
     email: '',
     phone: '',
-    age: 0,
+    age: '',
     category: 1
 };
+
+export const textFields = [
+    { label: 'Name', name: 'name', required: true },
+    { label: 'Email', name: 'email', type: 'email', required: true },
+    { label: 'Phone', name: 'phone', type: 'tel' },
+    { label: 'Age', name: 'age', type: 'number' },
+];

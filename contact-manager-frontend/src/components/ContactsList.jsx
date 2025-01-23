@@ -14,7 +14,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { deleteContactByEmail, getAllContacts } from '../services/contactService';
 import { formatPhoneNumber, getCategoryLabel } from '../utils/utils';
-import EditContactDialog from './EditContactDialog'; // import the edit dialog
+import EditContactDialog from './EditContactDialog'; 
 
 function ContactsList({ refreshFlag }) {
     const [contacts, setContacts] = useState([]);
@@ -37,7 +37,7 @@ function ContactsList({ refreshFlag }) {
     const handleContactUpdated = () => {
         setEditDialogOpen(false);
         setSelectedContact(null);
-        fetchContacts(); // re-fetch the updated list
+        fetchContacts(); 
     };
 
     const handleEditClick = (contact) => {
@@ -68,11 +68,9 @@ function ContactsList({ refreshFlag }) {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Email</TableCell>
-                            <TableCell>Phone</TableCell>
-                            <TableCell>Age</TableCell>
-                            <TableCell>Category</TableCell>
+                            {['Name', 'Email', 'Phone', 'Age', 'Category'].map((header) => (
+                                <TableCell key={header}>{header}</TableCell>
+                            ))}
                             <TableCell align='center'>Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -82,7 +80,7 @@ function ContactsList({ refreshFlag }) {
                                 <TableCell>{contact.name}</TableCell>
                                 <TableCell>{contact.email}</TableCell>
                                 <TableCell>{formatPhoneNumber(contact.phone)}</TableCell>
-                                <TableCell>{contact.age}</TableCell>
+                                <TableCell>{contact.age ?? 'N/A'}</TableCell>
                                 <TableCell>{getCategoryLabel(contact.category)}</TableCell>
                                 <TableCell align='center'>
                                     {/* Edit button */}

@@ -28,7 +28,8 @@ module.exports = (sequelize, DataTypes) => {
       },
       age: {
         type: DataTypes.INTEGER,
-        defaultValue: 0,
+        defaultValue: null,
+        allowNull: true
       },
       category: {
         type: DataTypes.INTEGER,

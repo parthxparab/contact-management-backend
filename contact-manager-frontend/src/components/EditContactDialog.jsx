@@ -13,9 +13,9 @@ import {
     Typography
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { CATEGORY_OPTIONS, initialFormData } from '../constants/constants';
+import { CATEGORY_OPTIONS, initialFormData, textFields } from '../constants/constants';
 import { updateContactByEmail } from '../services/contactService';
-import { validateFormData } from '../utils/utils';
+import { handleInputChange, validateFormData } from '../utils/utils';
 
 function EditContactDialog({ open, onClose, contactData, onContactUpdated }) {
 
@@ -37,11 +37,6 @@ function EditContactDialog({ open, onClose, contactData, onContactUpdated }) {
         }
     }, [open, contactData]);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setApiError(null);
@@ -50,10 +45,9 @@ function EditContactDialog({ open, onClose, contactData, onContactUpdated }) {
         const validationErrors = validateFormData(formData);
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
-            return; // Stop submission if invalid
+            return; 
         }
 
-        // Clear any old errors if validation passes
         setErrors({});
 
         try {
@@ -62,7 +56,7 @@ function EditContactDialog({ open, onClose, contactData, onContactUpdated }) {
                 name: formData.name.trim(),
                 email: formData.email.trim(),
                 phone: formData.phone.trim(),
-                age: formData.age,
+                age: formData.age ? Number(formData.age) : null,
                 category: Number(formData.category),
             });
 
@@ -87,43 +81,19 @@ function EditContactDialog({ open, onClose, contactData, onContactUpdated }) {
             <DialogContent dividers>
                 <form onSubmit={handleSubmit}>
                     <Stack spacing={2} sx={{ mt: 1 }}>
-                        <TextField
-                            label="Name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            error={!!errors.name}
-                            helperText={errors.name}
-                            required
-                        />
-                        <TextField
-                            label="Email"
-                            name="email"
-                            type="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            error={!!errors.email}
-                            helperText={errors.email}
-                            required
-                        />
-                        <TextField
-                            label="Phone"
-                            name="phone"
-                            type="tel"
-                            value={formData.phone}
-                            onChange={handleChange}
-                            error={!!errors.phone}
-                            helperText={errors.phone}
-                        />
-                        <TextField
-                            label="Age"
-                            name="age"
-                            type="number"
-                            value={formData.age}
-                            onChange={handleChange}
-                            error={!!errors.age}
-                            helperText={errors.age}
-                        />
+                        {textFields.map((field) => (
+                            <TextField
+                                key={field.name}
+                                label={field.label}
+                                name={field.name}
+                                type={field.type || 'text'}
+                                value={formData[field.name]}
+                                onChange={handleInputChange(setFormData)}
+                                error={!!errors[field.name]}
+                                helperText={errors[field.name]}
+                                required={field.required || false}
+                            />
+                        ))}
                         <FormControl fullWidth error={!!errors.category}>
                             <InputLabel id="category-label">Category</InputLabel>
                             <Select
@@ -131,7 +101,7 @@ function EditContactDialog({ open, onClose, contactData, onContactUpdated }) {
                                 label="Category"
                                 name="category"
                                 value={formData.category}
-                                onChange={handleChange}
+                                onChange={handleInputChange(setFormData)}
                             >
                                 {CATEGORY_OPTIONS.map((opt) => (
                                     <MenuItem key={opt.value} value={opt.value}>
@@ -146,7 +116,6 @@ function EditContactDialog({ open, onClose, contactData, onContactUpdated }) {
                             )}
                         </FormControl>
                     </Stack>
-
                     {apiError && (
                         <Typography color="error" variant="body2" sx={{ mt: 2 }}>
                             {apiError}
