@@ -29,7 +29,7 @@ function EditContactDialog({ open, onClose, contactData, onContactUpdated }) {
                 name: contactData.name || '',
                 email: contactData.email || '',
                 phone: contactData.phone || '',
-                age: contactData.age || 0,
+                age: contactData.age || '',
                 category: contactData.category || 1
             });
             setErrors({});

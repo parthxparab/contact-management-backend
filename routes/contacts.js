@@ -12,10 +12,10 @@ router.post('/', validateContact, async (req, res) => {
     } catch (error) {
         if (error.name === 'SequelizeUniqueConstraintError') {
             return res.status(400).json({
-                message: 'A contact with this email already exists.'
+                details: 'A contact with this email already exists.'
             });
         }
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ details: error.message });
     }
 });
 
@@ -26,7 +26,7 @@ router.get('/', async (req, res) => {
         console.log({contacts})
         return res.json(contacts);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ details: error.message });
     }
 });
 
@@ -36,11 +36,11 @@ router.get('/email/:email', async (req, res) => {
         const { email } = req.params;
         const contact = await Contact.findOne({ where: { email } });
         if (!contact) {
-            return res.status(404).json({ message: 'Contact not found' });
+            return res.status(404).json({ details: 'Contact not found' });
         }
         return res.json(contact);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ details: error.message });
     }
 });
 
@@ -49,27 +49,36 @@ router.put('/email/:email', validateContact, async (req, res) => {
     try {
         const { email } = req.params;
         const { name, phone, age, category } = req.body;
+        const newEmail = req.body.email; // New email to update
 
-        // 1. Find contact by email
+        // 1. Find the existing contact by the current email
         const contact = await Contact.findOne({ where: { email } });
         if (!contact) {
-            return res.status(404).json({ message: 'Contact not found' });
+            return res.status(404).json({ message: 'Contact not found.' });
         }
 
-        // 2. Update fields
-        //    If the user tries to update the email, handle that separately
-        //    or allow it (be mindful of the unique constraint).
-        await contact.update({ name, email: req.body.email, phone, age, category });
+        // 2. Check if the new email already exists in another contact
+        if (newEmail && newEmail !== email) {
+            const duplicateEmail = await Contact.findOne({ where: { email: newEmail } });
+            if (duplicateEmail) {
+                return res.status(400).json({
+                    details: 'A contact with this email already exists.',
+                });
+            }
+        }
+
+        // 3. Update the contact
+        await contact.update({ name, email: newEmail, phone, age, category });
 
         return res.json(contact);
     } catch (error) {
         // Handle unique constraint error (if the user changed the email to another existing email)
         if (error.name === 'SequelizeUniqueConstraintError') {
             return res.status(400).json({
-                message: 'A contact with this email already exists.',
+                details: 'A contact with this email already exists.',
             });
         }
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ details: error.message });
     }
 });
 
@@ -79,12 +88,12 @@ router.delete('/email/:email', async (req, res) => {
         const { email } = req.params;
         const contact = await Contact.findOne({ where: { email } });
         if (!contact) {
-            return res.status(404).json({ message: 'Contact not found' });
+            return res.status(404).json({ details: 'Contact not found' });
         }
         await contact.destroy();
-        return res.json({ message: 'Contact deleted successfully' });
+        return res.json({ details: 'Contact deleted successfully' });
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ details: error.message });
     }
 });
 
